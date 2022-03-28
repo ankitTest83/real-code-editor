@@ -12,20 +12,19 @@ const Client = ({ open, name }) => {
         sx={{
           minHeight: 48,
           justifyContent: open ? "initial" : "center",
-          px: 2.5,
         }}
       >
         {/* <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
           <>{name.charAt(0)}</>
         </Avatar> */}
         <Avatar
-          size="50"
+          size="40"
           round="10px"
           color={Avatar.getRandomColor("sitebase")}
           name={name}
-          sx={{ mx: 4 }}
         />
-        <ListItemText primary={name} sx={{ opacity: open ? 1 : 0, mx: 2 }} />
+
+        <ListItemText primary={name} sx={{ opacity: open ? 1 : 0, mx: 1 }} />
       </ListItemButton>
     </>
   );

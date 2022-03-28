@@ -11,14 +11,14 @@ const io = new Server(server);
 
 const userSocketMap = {};
 
-app.use(express.static("build"));
-app.use((req, res, next) => {
-  console.log(
-    "testing app use -> ",
-    path.join(__dirname, "build", "index.html")
-  );
-  res.sendFile(path.join(__dirname, "build", "index.html"));
-});
+// app.use(express.static("build"));
+// app.use((req, res, next) => {
+//   console.log(
+//     "testing app use -> ",
+//     path.join(__dirname, "build", "index.html")
+//   );
+//   res.sendFile(path.join(__dirname, "build", "index.html"));
+// });
 
 const getAllConectedClients = (roomId) => {
   return Array.from(io.sockets.adapter.rooms.get(roomId) || []).map(
@@ -51,13 +51,18 @@ io.on("connection", (socket) => {
 
   socket.on(socketActions.CODE_CHANGE, ({ roomId, code }) => {
     console.log("code changed server side log", code);
-    socket.in(roomId).emit(socketActions.CODE_CHANGE, { code });
+    socket
+      .in(roomId)
+      .emit(socketActions.CODE_CHANGE, { code, socketId: socket.id });
   });
 
   socket.on(socketActions.SYNC_CODE, ({ socketId, code }) => {
     console.log("code synced server side log", code);
     if (code) {
-      io.to(socketId).emit(socketActions.CODE_CHANGE, { code });
+      io.to(socketId).emit(socketActions.CODE_CHANGE, {
+        code,
+        socketId: socket.id,
+      });
     }
   });
 

@@ -102,7 +102,8 @@ const EditorPage = () => {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const [clients, setClients] = React.useState([]);
-
+  const [joinedUserSocketId, setJoinedUserSocketId] = React.useState(null);
+  const whoIsWriteCode = React.useRef(null);
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -131,11 +132,19 @@ const EditorPage = () => {
       if (data.userName !== obj.userName) {
         toast.success(`${data.userName} has joined the room`);
       }
-      setClients([...data.clients]);
+      setJoinedUserSocketId(data.soketId);
+      setClients([
+        ...data.clients,
+        { typerId: whoIsWriteCode.current?.socketId },
+      ]);
       console.log("SYNC_CODE ", codeRef.current);
+      console.log("all clients list ==> ", [
+        ...data.clients,
+        { typerId: whoIsWriteCode.current?.socketId },
+      ]);
       socketRef.current.emit(socketAction.SYNC_CODE, {
         code: codeRef.current,
-        socketId: data.socketId,
+        socketId: data.soketId,
       });
     });
 
@@ -208,7 +217,7 @@ const EditorPage = () => {
       <Drawer variant="permanent" open={open}>
         <DrawerHeader>
           <Box sx={{ width: "100%", display: "flex", alignItems: "center" }}>
-            <Typography>Code Sync </Typography>
+            <Typography>{location.state?.userName}</Typography>
           </Box>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === "rtl" ? (
@@ -219,14 +228,22 @@ const EditorPage = () => {
           </IconButton>
         </DrawerHeader>
         <Divider />
-        <List>
+        <List sx={{ ml: 3.5 }}>
           <Typography variant="p" noWrap component="div">
-            Connected
+            Connected Users
           </Typography>
           {clients &&
-            clients.map(({ userName, socketId }, index) => (
-              <Client key={socketId} open={open} name={userName} />
-            ))}
+            clients.map(
+              ({ userName, socketId }, index) => (
+                console.log(
+                  "joinedUserSocketId ",
+                  joinedUserSocketId,
+                  " socketId ",
+                  socketId
+                ),
+                (<Client key={socketId} open={open} name={userName} />)
+              )
+            )}
         </List>
         <Divider />
 
@@ -238,7 +255,7 @@ const EditorPage = () => {
           spacing={2}
         ></Stack>
         <Button
-          sx={{ my: 1 }}
+          sx={{ my: 1, mx: 2 }}
           variant="contained"
           color="success"
           onClick={copyRoomId}
@@ -246,7 +263,7 @@ const EditorPage = () => {
           Copy room id
         </Button>
         <Button
-          sx={{ my: 1 }}
+          sx={{ my: 1, mx: 2 }}
           variant="contained"
           color="error"
           onClick={leavRoom}
@@ -260,9 +277,10 @@ const EditorPage = () => {
         <Editor
           socketRef={socketRef}
           roomId={roomId}
-          onCodeChange={(code) => {
+          onCodeChange={({ socketId, code }) => {
             console.log("code onCodeChange --------> ", code);
             codeRef.current = code;
+            whoIsWriteCode.current = socketId;
           }}
         />
       </Box>

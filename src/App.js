@@ -3,12 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
 import Home from "./Pages/Home";
 import EditorPage from "./Pages/EditorPage";
-import {
-  ThemeProvider,
-  createTheme,
-  Paper,
-  CircularProgress,
-} from "@mui/material";
+import { ThemeProvider, createTheme, Paper } from "@mui/material";
 
 import {
   deepPurple,

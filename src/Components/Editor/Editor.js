@@ -31,7 +31,7 @@ const Editor = ({ socketRef, roomId, onCodeChange }) => {
       const { origin } = changes;
 
       const code = editorInstans.getValue();
-      onCodeChange(code);
+      onCodeChange({ socketId: null, code });
       console.log("code", code);
       if (origin !== "setValue") {
         console.log("working -->", code);
@@ -49,11 +49,12 @@ const Editor = ({ socketRef, roomId, onCodeChange }) => {
 
   useEffect(() => {
     if (socketRef.current) {
-      socketRef.current.on(socketAction.CODE_CHANGE, ({ code }) => {
+      socketRef.current.on(socketAction.CODE_CHANGE, ({ code, socketId }) => {
         console.log("code receving ouut  side if -->", code);
         if (code !== null) {
           console.log("code receving in side if -->", code);
           editorRef.current.setValue(code);
+          onCodeChange({ socketId, code });
         }
       });
     }
