@@ -10,10 +10,10 @@ import "codemirror/addon/edit/closetag";
 import socketAction from "../../socketAction";
 import Avatar from "react-avatar";
 
-const Editor = ({ socketRef, roomId, onCodeChange }) => {
+const Editor = ({ currentClientSocketId, socketRef, roomId, onCodeChange }) => {
   const editorRef = useRef(null);
   const init = () => {
-    console.log("init");
+    // console.log("init");
     editorRef.current = CodeMirror.fromTextArea(
       document.getElementById("readtimeEditor"),
       {
@@ -22,19 +22,19 @@ const Editor = ({ socketRef, roomId, onCodeChange }) => {
         autoCloseTags: true,
         autoCloseBrackets: true,
         lineNumbers: true,
+        matchBrackets: true,
       }
     );
 
     editorRef.current.on("change", (editorInstans, changes) => {
-      console.log("editorInstans", editorInstans);
-      console.log("change", changes);
+      // console.log("editorInstans", editorInstans);
+      // console.log("change", changes);
       const { origin } = changes;
 
       const code = editorInstans.getValue();
       onCodeChange({ socketId: null, code });
-      console.log("code", code);
+
       if (origin !== "setValue") {
-        console.log("working -->", code);
         socketRef.current.emit(socketAction.CODE_CHANGE, {
           roomId,
           code,
@@ -50,11 +50,10 @@ const Editor = ({ socketRef, roomId, onCodeChange }) => {
   useEffect(() => {
     if (socketRef.current) {
       socketRef.current.on(socketAction.CODE_CHANGE, ({ code, socketId }) => {
-        console.log("code receving ouut  side if -->", code);
         if (code !== null) {
-          console.log("code receving in side if -->", code);
+          // console.log("CODE_CHANGE *****", code, socketId);
           editorRef.current.setValue(code);
-          onCodeChange({ socketId, code });
+          onCodeChange({ socketId, code, currentClientSocketId });
         }
       });
     }

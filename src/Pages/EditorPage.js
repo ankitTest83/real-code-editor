@@ -100,8 +100,9 @@ const EditorPage = () => {
   const reactNavigator = useNavigate();
   const location = useLocation();
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(true);
   const [clients, setClients] = React.useState([]);
+  const [currentUserId, setCurrentUserId] = React.useState(null);
   const [joinedUserSocketId, setJoinedUserSocketId] = React.useState(null);
   const whoIsWriteCode = React.useRef(null);
   const handleDrawerOpen = () => {
@@ -114,34 +115,40 @@ const EditorPage = () => {
 
   const init = async () => {
     socketRef.current = await initSocket();
-    console.log("params ", params);
+    // console.log("params ", params);
     const obj = {
       roomId,
       userName: location.state?.userName,
     };
 
+    // console.log("location state", location.state);
+
     socketRef.current.on("connect_error ", (error) => handleErrors(error));
     socketRef.current.on("connect_failed ", (error) => handleErrors(error));
 
-    console.log("socketRef.current ");
+    // console.log("socketRef.current ");
     socketRef.current.emit(socketAction.JOIN, obj);
 
     // listen to the joined clients
     socketRef.current.on(socketAction.JOINED, (data) => {
-      console.log("JOINED new clients data ", data);
+      // console.log("JOINED new clients data ", data);
       if (data.userName !== obj.userName) {
         toast.success(`${data.userName} has joined the room`);
       }
       setJoinedUserSocketId(data.soketId);
-      setClients([
-        ...data.clients,
-        { typerId: whoIsWriteCode.current?.socketId },
-      ]);
-      console.log("SYNC_CODE ", codeRef.current);
-      console.log("all clients list ==> ", [
-        ...data.clients,
-        { typerId: whoIsWriteCode.current?.socketId },
-      ]);
+
+      const clientsArr = data.clients.map((client) => {
+        return {
+          ...client,
+          typerId: whoIsWriteCode.current?.socketId,
+        };
+      });
+
+      setClients([...clientsArr]);
+      localStorage.setItem("allConectedClients", JSON.stringify(clientsArr));
+
+      // console.log("SYNC_CODE ", codeRef.current);
+      // console.log("all clients list ==> ", [...clientsArr]);
       socketRef.current.emit(socketAction.SYNC_CODE, {
         code: codeRef.current,
         socketId: data.soketId,
@@ -150,7 +157,7 @@ const EditorPage = () => {
 
     // listen to the disconnected clients
     socketRef.current.on(socketAction.DISCONNECTED, (data) => {
-      console.log("DISCONNECTED new clients data ", data);
+      // console.log("DISCONNECTED new clients data ", data);
       if (data.userName !== obj.userName) {
         toast.success(`${data.userName} has left the room`);
         setClients((prev) => {
@@ -161,7 +168,7 @@ const EditorPage = () => {
   };
 
   const handleErrors = (error) => {
-    console.log("error", error);
+    // console.log("error", error);
     toast.error("socket connection failed");
     reactNavigator(`/`);
   };
@@ -176,6 +183,7 @@ const EditorPage = () => {
   };
 
   const leavRoom = () => {
+    localStorage.removeItem("allConectedClients");
     reactNavigator(`/`);
   };
 
@@ -187,6 +195,11 @@ const EditorPage = () => {
       socketRef.current.off(socketAction.DISCONNECTED);
     };
   }, []); // eslint-disable-line
+
+  const getJoinedClients = async () => {
+    const allClients = localStorage.getItem("allConectedClients");
+    return JSON.parse(allClients);
+  };
 
   if (!location.state) {
     return <Navigate to="/" />;
@@ -233,17 +246,16 @@ const EditorPage = () => {
             Connected Users
           </Typography>
           {clients &&
-            clients.map(
-              ({ userName, socketId }, index) => (
-                console.log(
-                  "joinedUserSocketId ",
-                  joinedUserSocketId,
-                  " socketId ",
-                  socketId
-                ),
-                (<Client key={socketId} open={open} name={userName} />)
-              )
-            )}
+            clients.map(({ userName, socketId, isTiyping }, index) => (
+              <Client
+                key={socketId}
+                socketId={socketId}
+                //whoIsWriteCode={whoIsWriteCode?.current?.socketId}
+                open={open}
+                name={userName}
+                isTiyping={isTiyping}
+              />
+            ))}
         </List>
         <Divider />
 
@@ -277,10 +289,44 @@ const EditorPage = () => {
         <Editor
           socketRef={socketRef}
           roomId={roomId}
-          onCodeChange={({ socketId, code }) => {
-            console.log("code onCodeChange --------> ", code);
+          currentClientSocketId={joinedUserSocketId}
+          onCodeChange={async ({ socketId, code, currentClientSocketId }) => {
+            // console.log("code is ", code);
             codeRef.current = code;
-            whoIsWriteCode.current = socketId;
+            if (socketId) {
+              const conectedClients = await getJoinedClients();
+              // init();
+              // console.log("show clients ", conectedClients);
+              // console.log("socketIs is ", socketId);
+
+              // socketRef.current.emit(socketAction.TYPING, {
+              //   socketId: socketId,
+              //   roomId: roomId,
+              // });
+
+              // socketRef.current.on(socketAction.TYPING, ({ socketId }) => {
+              //   // console.log("CODE_CHANGE TYPING *****", socketId);
+              //   // editorRef.current.setValue(code);
+              //   // onCodeChange({ socketId, code, currentClientSocketId });
+              // });
+
+              const clients_Arr =
+                (await conectedClients) &&
+                conectedClients.map((item) => {
+                  if (item.socketId === socketId) {
+                    return {
+                      ...item,
+                      isTiyping: true,
+                      whoIsTyping: item.userName,
+                    };
+                  } else {
+                    return { ...item };
+                  }
+                });
+
+              // console.log("clients_Arr", clients_Arr);
+              //setClients([...clients_Arr]);
+            }
           }}
         />
       </Box>

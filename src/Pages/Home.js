@@ -72,7 +72,9 @@ const Home = () => {
           sm={4}
           md={7}
           sx={{
-            backgroundImage: "url(https://source.unsplash.com/random)",
+            //backgroundImage: "url(https://source.unsplash.com/random)",
+            backgroundImage:
+              "url(https://img.freepik.com/free-vector/laptop-with-program-code-isometric-icon-software-development-programming-applications-dark-neon_39422-971.jpg?t=st=1657701085~exp=1657701685~hmac=cc17fa979e1ea3e78b5fad3082667e6f127938393c5b117594c87fd21c72d75d&w=740)",
             backgroundRepeat: "no-repeat",
             backgroundColor: (t) =>
               t.palette.mode === "light"
@@ -141,11 +143,6 @@ const Home = () => {
                 Join
               </Button>
               <Grid container>
-                <Grid item xs>
-                  <Link href="#" variant="body2">
-                    Forgot password?
-                  </Link>
-                </Grid>
                 <Grid item>
                   <span variant="body2">
                     {"if your don't have an invite then create "}
@@ -153,7 +150,8 @@ const Home = () => {
                   <Link
                     onClick={() => createNewRoom()}
                     href="#"
-                    variant="body2"
+                    sx={{ color: "yellow" }}
+                    //variant="body2"
                   >
                     New room
                   </Link>

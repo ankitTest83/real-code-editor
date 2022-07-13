@@ -66,6 +66,12 @@ io.on("connection", (socket) => {
     }
   });
 
+  // typing
+  // socket.on(socketActions.TYPING, ({ roomId, socketId }) => {
+  //   console.log("TYPING ACTIONG CALL socketId", { roomId, socketId });
+  //   socket.in(roomId).emit(socketActions.TYPING, { socketId });
+  // });
+
   // client disconnecting
   socket.on("disconnecting", () => {
     console.log(" all romms", [...socket.rooms]);

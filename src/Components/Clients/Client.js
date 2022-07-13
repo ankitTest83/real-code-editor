@@ -4,7 +4,16 @@ import ListItemText from "@mui/material/ListItemText";
 //import Avatar from "@mui/material/Avatar";
 import Avatar from "react-avatar";
 
-const Client = ({ open, name }) => {
+const Client = ({
+  open,
+  name,
+  socketId,
+  whoIsWriteCode,
+  isTiyping,
+  whoIsTyping,
+}) => {
+  // console.log("**************************************");
+
   return (
     <>
       <ListItemButton
@@ -21,10 +30,13 @@ const Client = ({ open, name }) => {
           size="40"
           round="10px"
           color={Avatar.getRandomColor("sitebase")}
-          name={name}
+          name={"name"}
         />
 
-        <ListItemText primary={name} sx={{ opacity: open ? 1 : 0, mx: 1 }} />
+        <ListItemText
+          primary={`${name} ${isTiyping ? "Typing" : ""}`}
+          sx={{ opacity: open ? 1 : 0, mx: 1 }}
+        />
       </ListItemButton>
     </>
   );
