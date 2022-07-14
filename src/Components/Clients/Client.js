@@ -12,8 +12,6 @@ const Client = ({
   isTiyping,
   whoIsTyping,
 }) => {
-  // console.log("**************************************");
-
   return (
     <>
       <ListItemButton
