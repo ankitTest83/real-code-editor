@@ -37,6 +37,8 @@ const EditorPage = () => {
         username: location.state?.username,
       });
 
+      console.log("location state ", location.state);
+
       // Listening for joined event
       socketRef.current.on(
         ACTIONS.JOINED,
@@ -105,7 +107,7 @@ const EditorPage = () => {
               src="/new-logo.svg"
               alt="code-sync-logo"
             />
-            <h4>{currentUser.username}</h4>
+            <h4>{location.state?.username}</h4>
           </div>
           <h3>Connected</h3>
           <div className="clientsList">
