@@ -5,5 +5,19 @@ body {
         'Helvetica Neue', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background: #1c1e29;
+    /* background: #151D3B; */
+    background-image: url('../public/bg-binary.jpg');
+    background-size: cover;
+  /* Add the blur effect */
+  backdrop-filter: blur(4px);
+
+
+  /* Full height */
+  height: 100%;
+
+  /* Center and scale the image nicely */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+
 }

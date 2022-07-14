@@ -2,12 +2,29 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #fff;
+    color: #d7d7df;
     height: 100vh;
 }
 
+.logo-header{
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+
+
+}
+
+.logo-header h4{
+    font-size: 32px;
+    padding: 1px;
+    margin: 25px 14px;
+    letter-spacing: 3px;
+    
+}
+
 .formWrapper {
-    background: #282a36;
+    background: linear-gradient(to bottom, #323232 0%, #3F3F3F 40%, #1C1C1C 150%), linear-gradient(to top, rgba(255,255,255,0.40) 0%, rgba(0,0,0,0.25) 200%);
+ background-blend-mode: multiply;
     padding: 20px;
     border-radius: 10px;
     width: 400px;
@@ -35,7 +52,7 @@ footer a {
 
 .homePageLogo {
     height: 80px;
-    margin-bottom: 30px;
+    /* margin-bottom: 30px; */
 }
 
 .inputBox {
@@ -61,14 +78,15 @@ footer a {
 
 .joinBtn,
 .leaveBtn {
-    background: #4aed88;
-    width: 100px;
+    background-image: linear-gradient(to right, #43e97b 0%, #38f9d7 100%);
+    background-blend-mode: multiply;
+    width: 100%;
     margin-left: auto;
 }
 
 .joinBtn:hover,
 .leaveBtn:hover {
-    background: #2b824c;
+ background-image: linear-gradient(to right, #43e97b 0%, #38f9d7 100%);
 }
 
 .createInfo {
